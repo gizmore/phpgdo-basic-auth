@@ -10,10 +10,10 @@ use GDO\Login\Method\Form;
 use GDO\Util\Common;
 
 /**
- * BasicAuth module for gdo6.
+ * BasicAuth module for GDOv7.
  * 
  * @author gizmore
- * @version 7.0.0
+ * @version 7.0.1
  * @since 6.11.3
  */
 final class Module_BasicAuth extends GDO_Module
