@@ -2,6 +2,7 @@
 namespace GDO\BasicAuth;
 
 use GDO\Core\GDO_Module;
+use GDO\Core\GDT;
 use GDO\Core\GDT_Secret;
 use GDO\Core\Application;
 use GDO\Core\GDT_Checkbox;
@@ -43,12 +44,12 @@ final class Module_BasicAuth extends GDO_Module
     ##################
     ### Middleware ###
     ##################
-    public function onInit() : void
+    public function onInit()
     {
     	if ( (@$_SERVER['REQUEST_METHOD'] === 'OPTIONS') ||
     	     (GDO_User::current()->isAuthenticated()) )
     	{
-    		return;
+    		return null;
     	}
     	
     	if (Application::instance()->isWebServer())
@@ -93,6 +94,7 @@ final class Module_BasicAuth extends GDO_Module
         		$this->deny();
         	}
     	}
+    	return null;
     }
     
     private function setupServerVarsFromURL()
