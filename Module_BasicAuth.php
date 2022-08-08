@@ -2,7 +2,6 @@
 namespace GDO\BasicAuth;
 
 use GDO\Core\GDO_Module;
-use GDO\Core\GDT;
 use GDO\Core\GDT_Secret;
 use GDO\Core\Application;
 use GDO\Core\GDT_Checkbox;
@@ -33,13 +32,13 @@ final class Module_BasicAuth extends GDO_Module
             GDT_Secret::make('basic_auth_user')->label('user_name'),
             GDT_Secret::make('basic_auth_pass')->label('password'),
         	GDT_Checkbox::make('basic_authentication')->initial('1'),
-        	GDT_Checkbox::make('basic_auth_url')->initial('1'),
+        	GDT_Checkbox::make('basic_auth_url')->initial('0'),
         ];
     }
-    public function cfgUsername() { return $this->getConfigVar('basic_auth_user'); }
-    public function cfgPassword() { return $this->getConfigVar('basic_auth_pass'); }
-    public function cfgAuthentication() { return $this->getConfigVar('basic_authentication'); }
-    public function cfgURL() { return $this->getConfigVar('basic_auth_url'); }
+    public function cfgUsername() : ?string { return $this->getConfigVar('basic_auth_user'); }
+    public function cfgPassword() : ?string { return $this->getConfigVar('basic_auth_pass'); }
+    public function cfgAuthentication() : bool { return $this->getConfigValue('basic_authentication'); }
+    public function cfgURL() : bool { return $this->getConfigValue('basic_auth_url'); }
     
     ##################
     ### Middleware ###
@@ -100,7 +99,7 @@ final class Module_BasicAuth extends GDO_Module
     private function setupServerVarsFromURL()
     {
     	$_SERVER['PHP_AUTH_USER'] = Common::getRequestString('xauth_user', @$_SERVER['PHP_AUTH_USER']);
-    	$_SERVER['PHP_AUTH_PW'] = Common::getRequestString('xauth_pw', @$_SERVER['PHP_AUTH_PW']);
+    	$_SERVER['PHP_AUTH_PW'] = Common::getRequestString('xauth_pass', @$_SERVER['PHP_AUTH_PW']);
     }
     
     private function tryAuthentication($username, $password)
