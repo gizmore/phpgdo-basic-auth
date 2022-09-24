@@ -43,7 +43,7 @@ final class Module_BasicAuth extends GDO_Module
     ##################
     ### Middleware ###
     ##################
-    public function onInit()
+    public function onModuleInit()
     {
     	if ( (@$_SERVER['REQUEST_METHOD'] === 'OPTIONS') ||
     	     (GDO_User::current()->isAuthenticated()) )
