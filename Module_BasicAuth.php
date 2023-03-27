@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace GDO\BasicAuth;
 
 use GDO\Core\Application;
@@ -12,7 +13,7 @@ use GDO\Util\Common;
 /**
  * BasicAuth module for GDOv7.
  *
- * @version 7.0.1
+ * @version 7.0.3
  * @since 6.11.3
  * @author gizmore
  */
@@ -37,14 +38,14 @@ final class Module_BasicAuth extends GDO_Module
 		];
 	}
 
-	public function onModuleInit()
+	public function onModuleInit(): void
 	{
 		if (
-			(@$_SERVER['REQUEST_METHOD'] === 'OPTIONS') ||
+			($_SERVER['REQUEST_METHOD'] === 'OPTIONS') ||
 			(GDO_User::current()->isAuthenticated())
 		)
 		{
-			return null;
+			return;
 		}
 
 		if (Application::instance()->isWebServer())
@@ -61,16 +62,9 @@ final class Module_BasicAuth extends GDO_Module
 				($password = $this->cfgPassword())
 			)
 			{
-				if (!isset($_SERVER['PHP_AUTH_USER']))
-				{
-				}
-				elseif (strcasecmp($username, $_SERVER['PHP_AUTH_USER']) !== 0)
-				{
-				}
-				elseif (strcmp($password, $_SERVER['PHP_AUTH_PW']) !== 0)
-				{
-				}
-				else
+				if ( (isset($_SERVER['PHP_AUTH_USER'])) &&
+					(strcasecmp($username, $_SERVER['PHP_AUTH_USER']) === 0) &&
+					(strcmp($password, $_SERVER['PHP_AUTH_PW']) === 0) )
 				{
 					$deny = false;
 				}
@@ -78,20 +72,19 @@ final class Module_BasicAuth extends GDO_Module
 
 			if ($deny && $this->cfgAuthentication() && module_enabled('Login'))
 			{
-				if (!isset($_SERVER['PHP_AUTH_USER']))
+				if ( (isset($_SERVER['PHP_AUTH_USER'])) &&
+					($this->tryAuthentication($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'])) )
 				{
-				}
-				else
-				{
-					$deny = !$this->tryAuthentication($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+					$deny = false;
 				}
 			}
+
 			if ($deny)
 			{
 				$this->deny();
 			}
 		}
-		return null;
+
 	}
 
 	public function cfgURL(): bool { return $this->getConfigValue('basic_auth_url'); }
