@@ -40,15 +40,7 @@ final class Module_BasicAuth extends GDO_Module
 
 	public function onModuleInit(): void
 	{
-		if (
-			($_SERVER['REQUEST_METHOD'] === 'OPTIONS') ||
-			(GDO_User::current()->isAuthenticated())
-		)
-		{
-			return;
-		}
-
-		if (Application::instance()->isWebServer())
+		if (Application::instance()->isWebServer() && ($_SERVER['REQUEST_METHOD'] !== 'OPTIONS') && (!GDO_User::current()->isAuthenticated()))
 		{
 			$deny = true;
 
